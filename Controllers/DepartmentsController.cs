@@ -14,7 +14,7 @@ namespace MeetingReservationSystem.Controllers
             _context = context;
         }
 
-        // GET: /Department/Index
+        // GET: /Departments/Index
         public async Task<IActionResult> Index()
         {
             // やること: データベースの Departments テーブルから、全部署を取得する
@@ -24,14 +24,14 @@ namespace MeetingReservationSystem.Controllers
             return View(departments);
         }
 
-        // Get: /Department/Create
+        // Get: /Departments/Create
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        // Post: /Department/Create
+        // Post: /Departments/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Department model)

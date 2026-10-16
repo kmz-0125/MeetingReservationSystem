@@ -1,5 +1,39 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model List<MeetingReservationSystem.Models.Department>
+
 @{
+	ViewData["Title"] = "部署一覧";
+}
+<h2>部署一覧</h2>
+
+<p>
+	<a asp-action="Create" class="btn btn-primary">部署作成</a>
+</p>
+
+@if (!Model.Any())
+{
+	<p>まだ部署がありません。</p>
+}
+else
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>部署ID</th>
+				<th>部署名</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var Department in Model)
+			{
+				<tr>
+					<td>@Department.DepartmentId</td>
+					<td>@Department.DepartmentName</td>
+					<td>
+						<a asp-action="Edit" asp-route-id="@Department.DepartmentId" class="btn btn-sm btn-secondary">編集</a>
+						<a asp-action="Delete" asp-route-id="@Department.DepartmentId" class="btn btn-sm btn-danger">削除</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
 }
