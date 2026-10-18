@@ -1,0 +1,37 @@
+﻿@model MeetingReservationSystem.Models.Department
+
+@{
+    ViewData["Title"] = "部署編集";
+}
+
+<h2>部署編集</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Edit" asp-route-id="@Model.DepartmentId" method="post">
+            <input type="hidden" asp-for="DepartmentId" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="DepartmentName" class="form-label"></label>
+                <input asp-for="DepartmentName" class="form-control" />
+                <span asp-validation-for="DepartmentName" class="text-danger"></span>
+            </div>
+
+            <!-- 表示専用(編集させない項目) -->
+            <div class="form-group mb-3">
+                <label class="form-label">部署ID</label>
+                <p class="form-control-plaintext">@Model.DepartmentId</p>
+            </div>
+
+            <button type="submit" class="btn btn-primary">更新</button>
+            <a asp-action="Index" asp-route-id="@Model.DepartmentId" class="btn btn-secondary">キャンセル</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

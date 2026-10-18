@@ -43,7 +43,7 @@ namespace MeetingReservationSystem.Controllers
 
             // 部署ID重複チェック
             bool isDuplicatedId = await _context.Departments
-    .AnyAsync(i => i.DepartmentId == model.DepartmentId);
+              .AnyAsync(d => d.DepartmentId == model.DepartmentId);
             if (isDuplicatedId)
             {
                 ModelState.AddModelError("DepartmentId", "登録されている部署IDです");
@@ -51,7 +51,7 @@ namespace MeetingReservationSystem.Controllers
 
             // 部署名重複チェック
             bool isDuplicatedName = await _context.Departments
-    .AnyAsync(i => i.DepartmentName == model.DepartmentName);
+              .AnyAsync(d => d.DepartmentName == model.DepartmentName);
             if (isDuplicatedName)
             {
                 ModelState.AddModelError("DepartmentName", "登録されている部署名です");
@@ -65,6 +65,66 @@ namespace MeetingReservationSystem.Controllers
 
             // 登録の重複なしの場合
             _context.Departments.Add(model);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+
+        // GET: /Departments/Edit
+        [HttpGet]
+        public async Task<IActionResult> Edit(string id)
+        {
+            var department = await _context.Departments
+                 .FirstOrDefaultAsync(d => d.DepartmentId == id);
+
+            if (department == null)
+            {
+                return NotFound();
+            }
+
+            return View(department);
+        }
+
+        // Post: /Departments/Edit
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(string id, Department model)
+        {
+            if (id != model.DepartmentId)
+            {
+                return NotFound();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var department = await _context.Departments
+                .FirstOrDefaultAsync(d => d.DepartmentId == id);
+
+            if (department == null)
+            {
+                return NotFound();
+            }
+
+            // 部署名の重複確認(自分自身を除く)
+            bool isDuplicatedName = await _context.Departments
+              .AnyAsync(d => d.DepartmentName == model.DepartmentName && id != d.DepartmentId);
+
+            // 同一名称の部署あり
+            if (isDuplicatedName)
+            {
+                ModelState.AddModelError("DepartmentName", "登録されている部署名です");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // 同一名称の部署なし
+            department.DepartmentName = model.DepartmentName;
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index");
