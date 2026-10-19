@@ -129,5 +129,50 @@ namespace MeetingReservationSystem.Controllers
 
             return RedirectToAction("Index");
         }
+
+        // GET: /Departments/Delete
+        [HttpGet]
+        public async Task<IActionResult> Delete(string id)
+        {
+            var department = await _context.Departments
+                 .FirstOrDefaultAsync(d => d.DepartmentId == id);
+
+            if (department == null)
+            {
+                return NotFound();
+            }
+
+            return View(department);
+        }
+
+        // POST: /Departments/Delete
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(string id)
+        {
+            var department = await _context.Departments
+                .FirstOrDefaultAsync(d => d.DepartmentId == id);
+
+            if (department == null)
+            {
+                return NotFound();
+            }
+
+            // 所属人数の確認
+            var usersCount = await _context.Users.CountAsync(
+                user => user.DepartmentId == id);
+            if (usersCount > 0)
+            {
+                ModelState.AddModelError(string.Empty, "所属者がいるため削除はできません");
+
+                // メソッド名がDeleteConfirmedのためDeleteを指定する必要がある
+                return View("Delete", department);
+            }
+
+            _context.Departments.Remove(department);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
     }
 }
