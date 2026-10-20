@@ -17,10 +17,8 @@ namespace MeetingReservationSystem.Controllers
         // GET: /Departments/Index
         public async Task<IActionResult> Index()
         {
-            // やること: データベースの Departments テーブルから、全部署を取得する
             var departments = await _context.Departments.ToListAsync();
 
-            //返すもの:取得した部署のリストを、Index の画面(ビュー)に渡す
             return View(departments);
         }
 
@@ -43,7 +41,7 @@ namespace MeetingReservationSystem.Controllers
 
             // 部署ID重複チェック
             bool isDuplicatedId = await _context.Departments
-              .AnyAsync(d => d.DepartmentId == model.DepartmentId);
+              .AnyAsync(department => department.DepartmentId == model.DepartmentId);
             if (isDuplicatedId)
             {
                 ModelState.AddModelError("DepartmentId", "登録されている部署IDです");
@@ -51,7 +49,7 @@ namespace MeetingReservationSystem.Controllers
 
             // 部署名重複チェック
             bool isDuplicatedName = await _context.Departments
-              .AnyAsync(d => d.DepartmentName == model.DepartmentName);
+              .AnyAsync(department => department.DepartmentName == model.DepartmentName);
             if (isDuplicatedName)
             {
                 ModelState.AddModelError("DepartmentName", "登録されている部署名です");
@@ -75,7 +73,7 @@ namespace MeetingReservationSystem.Controllers
         public async Task<IActionResult> Edit(string id)
         {
             var department = await _context.Departments
-                 .FirstOrDefaultAsync(d => d.DepartmentId == id);
+                 .FirstOrDefaultAsync(department => department.DepartmentId == id);
 
             if (department == null)
             {
@@ -101,7 +99,7 @@ namespace MeetingReservationSystem.Controllers
             }
 
             var department = await _context.Departments
-                .FirstOrDefaultAsync(d => d.DepartmentId == id);
+                .FirstOrDefaultAsync(department => department.DepartmentId == id);
 
             if (department == null)
             {
@@ -110,7 +108,7 @@ namespace MeetingReservationSystem.Controllers
 
             // 部署名の重複確認(自分自身を除く)
             bool isDuplicatedName = await _context.Departments
-              .AnyAsync(d => d.DepartmentName == model.DepartmentName && id != d.DepartmentId);
+              .AnyAsync(department => department.DepartmentName == model.DepartmentName && id != department.DepartmentId);
 
             // 同一名称の部署あり
             if (isDuplicatedName)
@@ -135,7 +133,7 @@ namespace MeetingReservationSystem.Controllers
         public async Task<IActionResult> Delete(string id)
         {
             var department = await _context.Departments
-                 .FirstOrDefaultAsync(d => d.DepartmentId == id);
+                 .FirstOrDefaultAsync(department => department.DepartmentId == id);
 
             if (department == null)
             {
@@ -151,7 +149,7 @@ namespace MeetingReservationSystem.Controllers
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
             var department = await _context.Departments
-                .FirstOrDefaultAsync(d => d.DepartmentId == id);
+                .FirstOrDefaultAsync(department => department.DepartmentId == id);
 
             if (department == null)
             {

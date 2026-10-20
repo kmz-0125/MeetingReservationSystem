@@ -10,6 +10,8 @@ namespace MeetingReservationSystem.Models
         [MaxLength(100)]
         public string RoomName { get; set; } = string.Empty;
 
+        [Required]
+        [Range(1, 8)]
         public int Capacity { get; set; }
     }
 }

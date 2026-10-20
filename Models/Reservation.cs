@@ -21,6 +21,8 @@ namespace MeetingReservationSystem.Models
         [Required]
         public DateTimeOffset EndTime { get; set; }
 
+        [Required]
+        [Range(1, 8)]
         public int ParticipantCount { get; set; }
 
         [MaxLength(1000)]
