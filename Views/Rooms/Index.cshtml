@@ -1,0 +1,42 @@
+﻿@model List<MeetingReservationSystem.Models.Room>
+
+@{
+	ViewData["Title"] = "会議室一覧";
+}
+<h2>会議室一覧</h2>
+
+<p>
+	<a asp-action="Create" class="btn btn-primary">会議室作成</a>
+</p>
+
+@if (!Model.Any())
+{
+	<p>まだ会議室がありません。</p>
+}
+else
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>会議室ID</th>
+				<th>会議室名</th>
+				<th>定員</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var room in Model)
+			{
+				<tr>
+					<td>@room.RoomId</td>
+					<td>@room.RoomName</td>
+					<td>@room.Capacity</td>
+					<td>
+						<a asp-action="Edit" asp-route-id="@room.RoomId" class="btn btn-sm btn-secondary">編集</a>
+						<a asp-action="Delete" asp-route-id="@room.RoomId" class="btn btn-sm btn-danger">削除</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
