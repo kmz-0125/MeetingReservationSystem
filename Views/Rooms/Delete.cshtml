@@ -1,0 +1,37 @@
+﻿@model MeetingReservationSystem.Models.Room
+
+@{
+	ViewData["Title"] = "会議室削除";
+}
+
+<h2>会議室削除</h2>
+
+<div class="row">
+	<div class="col-md-6">
+
+		<dl class="row">
+			<dt class="col-sm-2">会議室ID</dt>
+			<dd class="col-sm-10">@Model.RoomId</dd>
+
+			<dt class="col-sm-2">会議室名</dt>
+			<dd class="col-sm-10">@Model.RoomName</dd>
+
+			<dt class="col-sm-2">上限人数</dt>
+			<dd class="col-sm-10">@Model.Capacity</dd>
+		</dl>
+
+		<form asp-action="Delete" asp-route-id="@Model.RoomId" method="post">
+			<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+			<p>この会議室を削除しますか？</p>
+			<button type="submit" class="btn btn-sm btn-danger">削除する</button>
+			<a asp-action="Index" class="btn btn-sm btn-secondary">キャンセル</a>
+		</form>
+	</div>
+</div>
+
+@section Scripts
+{
+	@{
+		await Html.RenderPartialAsync("_ValidationScriptsPartial");
+	}
+}
