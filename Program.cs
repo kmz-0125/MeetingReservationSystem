@@ -14,7 +14,15 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = false; // メール確認の必須化などの設定
+    // メール確認の必須化などの設定
+    options.SignIn.RequireConfirmedAccount = false; 
+    
+    // Password:8文字以上（数字・英数字・記号は不可）
+    options.Password.RequiredLength = 8;
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
 })
 .AddEntityFrameworkStores<AppDbContext>();
 
