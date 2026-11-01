@@ -41,5 +41,55 @@ namespace MeetingReservationSystem.Controllers
 
             return View(model);
         }
+
+        // POST: /Users/Register
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                model.Departments = await LoadDepartmentsAsync();
+                return View(model);
+            }
+
+            bool exists = await _context.Departments
+              .AnyAsync(d => d.DepartmentId == model.DepartmentId);
+            if (!exists)
+            {
+                ModelState.AddModelError("DepartmentId", "部署が存在しません");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                model.Departments = await LoadDepartmentsAsync();
+                return View(model);
+            }
+
+            var applicationUser = new ApplicationUser
+            {
+                UserName = model.UserName,
+                FamilyName = model.FamilyName,
+                FirstName = model.FirstName,
+                DepartmentId = model.DepartmentId,
+            };
+
+            IdentityResult result = await _userManager.CreateAsync(applicationUser, model.Password);
+
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+
+            model.Departments = await LoadDepartmentsAsync();
+            return View(model);
+        }
     }
 }
