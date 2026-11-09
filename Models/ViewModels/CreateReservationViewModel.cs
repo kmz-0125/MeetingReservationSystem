@@ -10,21 +10,21 @@ namespace MeetingReservationSystem.Models.ViewModels
         [Display(Name = "議題")]
         public string Title { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "会議室番号の選択は必要です。")]
-        [Display(Name = "会議室番号")]
+        [Required(ErrorMessage = "会議室の選択は必要です。")]
+        [Display(Name = "会議室")]
         public int RoomId { get; set; }
 
         [Required(ErrorMessage = "開始時刻の登録は必要です。")]
         [Display(Name = "開始時刻")]
-        public DateTime StartTime { get; set; }
+        public DateTime? StartTime { get; set; }
 
         [Required(ErrorMessage = "終了時刻の登録は必要です。")]
         [Display(Name = "終了時刻")]
-        public DateTime EndTime { get; set; }
+        public DateTime? EndTime { get; set; }
 
         [Required(ErrorMessage = "人数の登録は必要です。")]
         [Display(Name = "予約人数")]
-        [Range(1, 8)]
+        [Range(1, 8, ErrorMessage = "予約人数は1から8の間で入力してください。")]
         public int ParticipantCount { get; set; }
 
         [MaxLength(1000)]

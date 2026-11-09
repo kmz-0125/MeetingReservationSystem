@@ -1,4 +1,5 @@
 ﻿using MeetingReservationSystem.Data;
+using MeetingReservationSystem.Extensions;
 using MeetingReservationSystem.Models;
 using MeetingReservationSystem.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -20,22 +21,6 @@ namespace MeetingReservationSystem.Controllers
         {
             _context = context;
             _userManager = userManager;
-        }
-
-        private static readonly TimeSpan JstOffset = TimeSpan.FromHours(9);
-
-        // jst→utc
-        private static DateTimeOffset ToUtcFromJst(DateTime jstDateTime)
-        {
-            var unspecified = DateTime.SpecifyKind(jstDateTime, DateTimeKind.Unspecified);
-            var jst = new DateTimeOffset(unspecified, JstOffset);
-            return jst.ToUniversalTime();
-        }
-
-        // utc→jst
-        private static DateTime ToJstFromUtc(DateTimeOffset utcDateTimeOffset)
-        {
-            return utcDateTimeOffset.ToOffset(JstOffset).DateTime;
         }
 
         private async Task<List<SelectListItem>> LoadRoomsAsync()
@@ -86,7 +71,14 @@ namespace MeetingReservationSystem.Controllers
             var userId = _userManager.GetUserId(User);
             if (userId is null) return Challenge();
 
-            if (model.StartTime >= model.EndTime)
+            // StartTime EndTimeのnullチェック、DateTimeにキャスト
+            if (model.StartTime is not DateTime start || model.EndTime is not DateTime end)
+            {
+                model.Rooms = await LoadRoomsAsync();
+                return View(model);
+            }
+
+            if (start >= end)
             {
                 ModelState.AddModelError("EndTime", "終了時刻は開始時刻より後にしてください");
                 model.Rooms = await LoadRoomsAsync();
@@ -95,6 +87,7 @@ namespace MeetingReservationSystem.Controllers
 
             bool exists = await _context.Rooms
                 .AnyAsync(r => r.RoomId == model.RoomId);
+
             if (!exists)
             {
                 ModelState.AddModelError("RoomId", "会議室が存在しません");
@@ -107,8 +100,8 @@ namespace MeetingReservationSystem.Controllers
                 UserId = userId,
                 Title = model.Title,
                 RoomId = model.RoomId,
-                StartTime = ToUtcFromJst(model.StartTime),
-                EndTime = ToUtcFromJst(model.EndTime),
+                StartTime = TimeHelper.ToUtcFromJst(start),
+                EndTime = TimeHelper.ToUtcFromJst(end),
                 ParticipantCount = model.ParticipantCount,
                 Announcement = model.Announcement,
             };
