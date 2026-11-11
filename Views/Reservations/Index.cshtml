@@ -1,6 +1,60 @@
-﻿namespace MeetingReservationSystem.Views.Reservations
+﻿@using MeetingReservationSystem.Extensions
+@model List<MeetingReservationSystem.Models.Reservation>
+
+
+@{
+	ViewData["Title"] = "予約一覧";
+}
+<h2>予約一覧</h2>
+
+<p>
+	<a asp-action="Create" class="btn btn-primary">予約作成</a>
+</p>
+
+@if (!Model.Any())
 {
-    public class Index
-    {
-    }
+	<p>まだ予約がありません。</p>
+}
+else
+{
+	<table class="table">
+		<thead>
+			<tr>
+				<th>苗字</th>
+				<th>名前</th>
+				<th>議題</th>
+				<th>会議室</th>
+				<th>開始時刻</th>
+				<th>終了時刻</th>
+				<th>予約人数</th>
+				<th>連絡事項</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var reservation in Model)
+			{
+				<tr>
+					<td>@reservation.User?.FamilyName</td>
+					<td>@reservation.User?.FirstName</td>
+					<td>@reservation.Title</td>
+					<td>@reservation.Room?.RoomName</td>
+					<td>
+						@(TimeHelper.ToJstFromUtc(reservation.StartTime)
+									.ToString("yyyy/MM/dd HH:mm"))
+					</td>
+					<td>
+						@(TimeHelper.ToJstFromUtc(reservation.EndTime)
+											.ToString("yyyy/MM/dd HH:mm"))
+					</td>
+					<td>@reservation.ParticipantCount</td>
+					<td>@reservation.Announcement</td>
+					<td>
+						<a asp-action="Edit" asp-route-id="@reservation.Id" class="btn btn-sm btn-secondary">編集</a>
+						<a asp-action="Delete" asp-route-id="@reservation.Id" class="btn btn-sm btn-danger">削除</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
 }
