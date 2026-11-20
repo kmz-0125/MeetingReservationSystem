@@ -85,12 +85,19 @@ namespace MeetingReservationSystem.Controllers
                 return View(model);
             }
 
-            bool exists = await _context.Rooms
-                .AnyAsync(r => r.RoomId == model.RoomId);
+            var existRoom = await _context.Rooms
+                .FirstOrDefaultAsync(r => r.RoomId == model.RoomId);
 
-            if (!exists)
+            if (existRoom == null)
             {
                 ModelState.AddModelError("RoomId", "会議室が存在しません");
+                model.Rooms = await LoadRoomsAsync();
+                return View(model);
+            }
+
+            if (model.ParticipantCount > existRoom.Capacity)
+            {
+                ModelState.AddModelError("ParticipantCount", "予約人数が会議室の定員を超えています。");
                 model.Rooms = await LoadRoomsAsync();
                 return View(model);
             }
